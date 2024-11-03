@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+
+<plugin>
+
+    <extension point="org.jkiss.dbeaver.generic.meta">
+        <meta id="flink" class="org.jkiss.dbeaver.ext.flink.model.FlinkMetaModel"
+              driverClass="org.apache.flink.table.jdbc.FlinkDriver" dialect="flink"/>
+    </extension>
+
+    <extension point="org.jkiss.dbeaver.dataSourceProvider">
+        <datasource
+                class="org.jkiss.dbeaver.ext.flink.model.FlinkDataSourceProvider"
+                description="Flink datasource"
+                id="flink"
+                parent="generic"
+                label="Flink"
+                icon="icons/flink_icon.png"
+                dialect="flink">
+            <treeInjection path="generic/catalog/schema/table"
+                           changeFolderType="org.jkiss.dbeaver.ext.flink.model.FlinkTable"/>
+            <treeInjection path="generic/catalog/schema/table/attribute"
+                           changeFolderType="org.jkiss.dbeaver.ext.flink.model.FlinkTableColumn"/>
+            <treeInjection path="generic/catalog/schema/table/index"
+                           changeFolderType="org.jkiss.dbeaver.ext.flink.model.FlinkIndex"/>
+            <drivers managable="true">
+
+                <driver
+                        id="apache_flink"
+                        label="Apache flink"
+                        icon="icons/flink_icon.png"
+                        iconBig="icons/flink_icon_big.png"
+                        class="org.apache.flink.table.jdbc.FlinkDriver"
+                        sampleURL="jdbc:flink://{host}[:{port}][/{database}]"
+                        defaultPort="8083"
+                        description="Apache Flink JDBC"
+                        webURL="https://cwiki.apache.org/confluence/display/Flink/Home"
+                        databaseDocumentationSuffixURL="Apache-Flink"
+                        category="Hadoop"
+                        categories="hadoop">
+                    <replace provider="generic" driver="apache_flink"/>
+
+                    <file type="jar"
+                          path="https://github.com/timveil/hive-jdbc-uber-jar/releases/download/v1.9-2.6.5/hive-jdbc-uber-2.6.5.0-292.jar"
+                          bundle="!drivers.flink"/>
+                    <file type="license" path="https://www.apache.org/licenses/LICENSE-2.0.txt" bundle="!drivers.flink"/>
+                    <file type="jar" path="drivers/flink" bundle="drivers.flink"/>
+                    <file type="license" path="drivers/apache_lic/LICENSE.txt" bundle="drivers.flink"/>
+
+                    <parameter name="supports-delimiter-in-views" value="false"/>
+                    <parameter name="supports-limits" value="false"/>
+                    <parameter name="supports-references" value="false"/>
+                    <parameter name="query-get-active-db" value="SELECT CURRENT_DATABASE()"/>
+                    <parameter name="query-set-active-db" value="USE ?"/>
+                </driver>
+            </drivers>
+        </datasource>
+    </extension>
+
+    <extension point="org.jkiss.dbeaver.sqlDialect">
+        <dialect id="flink" parent="generic" class="org.jkiss.dbeaver.ext.flink.model.FlinkSQLDialect" label="Flink"
+                 description="Apache Flink SQL dialect."
+                 icon="icons/flink_icon.png">
+        </dialect>
+    </extension>
+
+    <extension point="org.jkiss.dbeaver.objectManager">
+        <manager class="org.jkiss.dbeaver.ext.flink.model.edit.FlinkTableManager"
+                 objectType="org.jkiss.dbeaver.ext.flink.model.FlinkTable"/>
+        <manager class="org.jkiss.dbeaver.ext.flink.model.edit.FlinkTableColumnManager"
+                 objectType="org.jkiss.dbeaver.ext.flink.model.FlinkTableColumn"/>
+        <manager class="org.jkiss.dbeaver.ext.flink.model.edit.FlinkIndexManager"
+                 objectType="org.jkiss.dbeaver.ext.flink.model.FlinkIndex"/>
+    </extension>
+
+</plugin>
